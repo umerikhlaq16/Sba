@@ -1,26 +1,148 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.hero-fade-up {
+  animation: hero-fade-up 0.8s ease-out both;
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fffefc;
+  --foreground: #17161b;
+  /* Brand colors, sampled from the SB Alliance logo mark */
+  --brand-rose: #ee4e72;
+  --brand-rose-light: #ff8c9e;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-brand: var(--brand-rose);
+  --color-brand-light: var(--brand-rose-light);
+  --font-sans: var(--font-barlow);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-serif: var(--font-barlow);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+a,
+button:not(:disabled),
+[role="button"]:not(:disabled) {
+  cursor: pointer;
+}
+
+/* Client wants the public site to match the reference's sharp, flat
+   corners exactly — this only touches (site) pages, not /admin. */
+.site-flat,
+.site-flat * {
+  border-radius: 0 !important;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Rich text editor (Tiptap) support styles */
+.rte-content ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0;
+}
+.rte-content li[data-type="taskItem"] {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.rte-content li[data-type="taskItem"] > label {
+  margin-top: 0.3rem;
+  user-select: none;
+}
+.rte-content li[data-type="taskItem"] > div {
+  flex: 1;
+}
+.rte-content .tableWrapper {
+  overflow-x: auto;
+}
+.rte-content table {
+  border-collapse: collapse;
+  width: 100%;
+}
+.rte-content table td,
+.rte-content table th {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem 0.75rem;
+  position: relative;
+}
+.rte-content table th {
+  background: #f9fafb;
+  font-weight: 600;
+  text-align: left;
+}
+.rte-content .ProseMirror-selectednode {
+  outline: 2px solid #111827;
+  border-radius: 0.25rem;
+}
+.rte-content p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+/* Policy page reading experience */
+.policy-prose {
+  --tw-prose-headings: #111827;
+  --tw-prose-links: #111827;
+}
+.policy-prose ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0;
+}
+.policy-prose li[data-type="taskItem"] {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.policy-prose table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+  width: 100%;
+}
+.policy-prose table td,
+.policy-prose table th {
+  border: 1px solid #e5e7eb;
+  padding: 0.6rem 0.9rem;
+}
+.policy-prose table th {
+  background: #f9fafb;
+}
+.policy-prose .rte-callout p {
+  margin: 0;
+}
+.policy-prose iframe {
+  max-width: 100%;
+  border-radius: 0.75rem;
 }
