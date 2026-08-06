@@ -159,7 +159,7 @@ export const contentSchema: SectionDef[] = [
         key: "catalogPdfUrl",
         label: "Downloadable catalog PDF (optional URL)",
         type: "text",
-        default: "",
+        default: "/dr-choice-catalog.pdf",
       },
       {
         key: "selectedProducts",
