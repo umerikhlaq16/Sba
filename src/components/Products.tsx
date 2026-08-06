@@ -46,7 +46,7 @@ export default function Products() {
             href={copy.catalogPdfUrl || copy.ctaLink}
             target={copy.catalogPdfUrl ? "_blank" : undefined}
             rel={copy.catalogPdfUrl ? "noreferrer" : undefined}
-            className="shrink-0 border border-brand px-6 py-3 text-xs font-medium uppercase tracking-widest text-brand hover:bg-brand hover:text-white"
+            className="hidden shrink-0 border border-brand px-6 py-3 text-xs font-medium uppercase tracking-widest text-brand hover:bg-brand hover:text-white sm:inline-block"
           >
             Download Catalog
           </a>
@@ -72,12 +72,14 @@ export default function Products() {
           ))}
         </div>
 
-        <div className="mt-16 flex justify-center sm:mt-20">
+        <div className="mt-16 flex justify-center sm:hidden">
           <a
-            href="/contact"
-            className="border-b border-foreground/30 pb-1 text-xs font-medium uppercase tracking-widest text-foreground/70 hover:border-foreground hover:text-foreground"
+            href={copy.catalogPdfUrl || copy.ctaLink}
+            target={copy.catalogPdfUrl ? "_blank" : undefined}
+            rel={copy.catalogPdfUrl ? "noreferrer" : undefined}
+            className="border border-brand px-6 py-3 text-xs font-medium uppercase tracking-widest text-brand hover:bg-brand hover:text-white"
           >
-            Let&apos;s Connect
+            Download Catalog
           </a>
         </div>
       </div>
