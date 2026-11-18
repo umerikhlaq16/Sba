@@ -51,7 +51,7 @@ export default function AboutSection() {
         <div
           className={`mt-14 grid grid-cols-1 gap-4 sm:gap-6 ${gallery.length > 0 ? "lg:grid-cols-2" : ""}`}
         >
-          <div className={`relative w-full overflow-hidden ${gallery.length > 0 ? "aspect-[4/3]" : "aspect-[16/7]"}`}>
+          <div className={`relative w-full overflow-hidden ${gallery.length > 0 ? "aspect-[4/3]" : "aspect-[4/3] sm:aspect-[16/7]"}`}>
             {copy.storyImage ? (
               <Image src={copy.storyImage} alt="SB Alliance facility" fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
             ) : (

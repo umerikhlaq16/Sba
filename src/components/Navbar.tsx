@@ -44,7 +44,7 @@ function NavLink({
     <Link
       href={href}
       onClick={onClick}
-      className="text-[13px] font-medium uppercase tracking-[0.12em] text-foreground/70 hover:text-foreground"
+      className="whitespace-nowrap text-[13px] font-medium uppercase tracking-[0.12em] text-foreground/70 hover:text-foreground"
     >
       {name}
     </Link>
@@ -57,12 +57,12 @@ export default function Navbar() {
 
   return (
     <nav className="site-navbar w-full bg-background px-4 py-2.5 sm:px-6 sm:py-3 lg:px-8">
-      <div className="mx-auto grid w-full max-w-[1600px] grid-cols-2 items-center md:grid-cols-[auto_1fr_auto] md:gap-4 lg:gap-8">
+      <div className="mx-auto grid w-full max-w-[1600px] grid-cols-2 items-center lg:grid-cols-[auto_1fr_auto] lg:gap-8">
         <Link href="/" aria-label="SB Alliance home" className="flex items-center gap-2.5">
           <Logo />
         </Link>
 
-        <ul className="hidden items-center justify-center gap-4 md:flex lg:gap-9">
+        <ul className="hidden items-center justify-center gap-6 lg:flex xl:gap-9">
           {links.map((link) => (
             <li key={link.name}>
               <NavLink
@@ -74,7 +74,7 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <div className="hidden justify-end md:flex">
+        <div className="hidden justify-end lg:flex">
           <Link
             href="/contact"
             className="border border-foreground bg-foreground px-5 py-2.5 text-[13px] font-medium uppercase tracking-[0.1em] text-background hover:bg-foreground/90"
@@ -85,7 +85,7 @@ export default function Navbar() {
 
         <button
           onClick={() => setOpen(!open)}
-          className="flex flex-col gap-1.5 justify-self-end p-3 md:hidden"
+          className="flex flex-col gap-1.5 justify-self-end p-3 lg:hidden"
           aria-label="Toggle menu"
         >
           <span className="h-0.5 w-5 bg-foreground" />
@@ -95,7 +95,7 @@ export default function Navbar() {
       </div>
 
       {open && (
-        <ul className="mt-2 flex flex-col gap-1 border border-foreground/10 bg-background p-3 md:hidden">
+        <ul className="mt-2 flex flex-col gap-1 border border-foreground/10 bg-background p-3 lg:hidden">
           {links.map((link) => (
             <li key={link.name}>
               <a
@@ -104,7 +104,7 @@ export default function Navbar() {
                   handleHashClick(e, link.href);
                   setOpen(false);
                 }}
-                className="block px-4 py-2 text-xs font-medium uppercase tracking-[0.1em] text-foreground/70"
+                className="block px-4 py-3 text-sm font-medium uppercase tracking-[0.1em] text-foreground/70"
               >
                 {link.name}
               </a>
