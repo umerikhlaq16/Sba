@@ -25,7 +25,7 @@ export default function Home() {
   const slides = (hero.slides ?? []).filter((s) => s.image);
   const bannerImages = slides.length > 0 ? slides.map((s) => s.image) : hero.image ? [hero.image] : [];
   const [current, setCurrent] = useState(0);
-  const videoSrc = hero.video || "/hero-video.mp4";
+  const videoSrc = hero.video || "/hero-video-2.mp4";
 
   useEffect(() => {
     if (videoSrc || bannerImages.length < 2) return;
