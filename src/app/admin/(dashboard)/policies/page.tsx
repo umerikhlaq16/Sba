@@ -8,6 +8,11 @@ import { LoadingScreen } from "@/components/Spinner";
 import type { PolicyPage } from "@/lib/policyPages";
 import { slugify } from "@/lib/policyPages";
 
+// Kept outside the component: it's only called from event handlers, never during render.
+function currentTime() {
+  return Date.now();
+}
+
 export default function PolicyPagesListPage() {
   const [pages, setPages] = useState<PolicyPage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,8 +71,8 @@ export default function PolicyPagesListPage() {
       doc(db, "policyPages", p.id),
       {
         status: nextStatus,
-        publishedAt: nextStatus === "published" ? Date.now() : p.publishedAt,
-        updatedAt: Date.now(),
+        publishedAt: nextStatus === "published" ? currentTime() : p.publishedAt,
+        updatedAt: currentTime(),
       },
       { merge: true }
     );

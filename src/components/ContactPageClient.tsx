@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import { useSection } from "@/contexts/ContentContext";
+import { inquiryMailto, submitInquiry, type Inquiry } from "@/lib/submissions";
 
 export default function ContactPageClient() {
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState<false | "saved" | "email">(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
   const copy = useSection("contact") as {
     heading: string;
     subtext: string;
@@ -14,9 +17,31 @@ export default function ContactPageClient() {
     factoryAddress: string;
   };
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitted(true);
+    const form = new FormData(e.currentTarget);
+    const get = (k: string) => String(form.get(k) ?? "").trim();
+    const data: Inquiry = {
+      name: get("name"),
+      company: get("company"),
+      email: get("email"),
+      phone: get("phone"),
+      subject: get("subject"),
+      message: get("message"),
+    };
+    setError("");
+    setSending(true);
+    try {
+      const saved = await submitInquiry(data);
+      if (!saved) {
+        window.location.href = inquiryMailto(copy.email, data);
+      }
+      setSubmitted(saved ? "saved" : "email");
+    } catch {
+      setError(`Something went wrong. Please email us directly at ${copy.email}.`);
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
@@ -32,9 +57,13 @@ export default function ContactPageClient() {
           <div>
             {submitted ? (
               <div className="border border-foreground/10 p-8">
-                <p className="font-serif text-lg text-foreground">Inquiry sent.</p>
+                <p className="font-serif text-lg text-foreground">
+                  {submitted === "saved" ? "Inquiry sent." : "Almost done."}
+                </p>
                 <p className="mt-2 text-sm text-foreground/60">
-                  Thanks for reaching out. We&apos;ll be in touch soon.
+                  {submitted === "saved"
+                    ? "Thanks for reaching out. We'll be in touch soon."
+                    : `Your email app should open with your inquiry filled in. Press send, or email us at ${copy.email}.`}
                 </p>
               </div>
             ) : (
@@ -46,6 +75,7 @@ export default function ContactPageClient() {
                     </label>
                     <input
                       id="name"
+                      name="name"
                       type="text"
                       required
                       placeholder="Your name"
@@ -58,6 +88,7 @@ export default function ContactPageClient() {
                     </label>
                     <input
                       id="company"
+                      name="company"
                       type="text"
                       placeholder="Your company"
                       className="border border-foreground/15 bg-transparent px-4 py-3 text-sm text-foreground placeholder:text-foreground/30 focus:border-brand focus:outline-none"
@@ -72,6 +103,7 @@ export default function ContactPageClient() {
                     </label>
                     <input
                       id="email"
+                      name="email"
                       type="email"
                       required
                       placeholder="you@company.com"
@@ -84,6 +116,7 @@ export default function ContactPageClient() {
                     </label>
                     <input
                       id="phone"
+                      name="phone"
                       type="tel"
                       placeholder="+92 300 0000000"
                       className="border border-foreground/15 bg-transparent px-4 py-3 text-sm text-foreground placeholder:text-foreground/30 focus:border-brand focus:outline-none"
@@ -97,6 +130,7 @@ export default function ContactPageClient() {
                   </label>
                   <input
                     id="subject"
+                      name="subject"
                     type="text"
                     placeholder="Export order, private label, general inquiry..."
                     className="border border-foreground/15 bg-transparent px-4 py-3 text-sm text-foreground placeholder:text-foreground/30 focus:border-brand focus:outline-none"
@@ -109,6 +143,7 @@ export default function ContactPageClient() {
                   </label>
                   <textarea
                     id="message"
+                      name="message"
                     required
                     rows={5}
                     placeholder="Tell us a bit more..."
@@ -116,11 +151,18 @@ export default function ContactPageClient() {
                   />
                 </div>
 
+                {error && (
+                  <p role="alert" className="text-sm text-red-600">
+                    {error}
+                  </p>
+                )}
+
                 <button
                   type="submit"
-                  className="mt-2 self-start border border-brand px-7 py-3.5 text-[13px] font-medium uppercase tracking-[0.1em] text-brand hover:bg-brand hover:text-white"
+                  disabled={sending}
+                  className="mt-2 self-start border border-brand px-7 py-3.5 text-[13px] font-medium uppercase tracking-[0.1em] text-brand hover:bg-brand hover:text-white disabled:cursor-wait disabled:opacity-60"
                 >
-                  Send Inquiry
+                  {sending ? "Sending..." : "Send Inquiry"}
                 </button>
               </form>
             )}

@@ -9,13 +9,22 @@ import type { PolicyPage } from "@/lib/policyPages";
 import { LoadingScreen } from "@/components/Spinner";
 import { useFooterVisibility } from "@/contexts/FooterVisibilityContext";
 import { sanitizePolicyHtml } from "@/lib/sanitizeHtml";
+import { getDefaultPolicy } from "@/lib/defaultPolicies";
 
 export default function PolicyPageView() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
-  const [page, setPage] = useState<PolicyPage | null | undefined>(undefined);
-  const [mounted, setMounted] = useState(false);
+  // Result of the Firestore lookup, tagged with the slug it belongs to so a stale
+  // result from a previous slug is never shown.
+  const [fetched, setFetched] = useState<{ slug: string; page: PolicyPage | null } | null>(null);
   const { setHideFooter } = useFooterVisibility();
+
+  const fallback = slug ? getDefaultPolicy(slug) : null;
+  const page: PolicyPage | null | undefined = !db || !slug
+    ? fallback
+    : fetched?.slug === slug
+      ? fetched.page ?? fallback
+      : undefined;
 
   useEffect(() => {
     setHideFooter(page === undefined);
@@ -23,12 +32,8 @@ export default function PolicyPageView() {
   }, [page, setHideFooter]);
 
   useEffect(() => {
-    if (!db || !slug) {
-      setPage(null);
-      return;
-    }
+    if (!db || !slug) return;
     let cancelled = false;
-    setPage(undefined);
 
     const q = query(
       collection(db, "policyPages"),
@@ -39,15 +44,11 @@ export default function PolicyPageView() {
     getDocs(q)
       .then((snap) => {
         if (cancelled) return;
-        if (snap.empty) {
-          setPage(null);
-          return;
-        }
         const d = snap.docs[0];
-        setPage({ id: d.id, ...d.data() } as PolicyPage);
+        setFetched({ slug, page: d ? ({ id: d.id, ...d.data() } as PolicyPage) : null });
       })
       .catch(() => {
-        if (!cancelled) setPage(null);
+        if (!cancelled) setFetched({ slug, page: null });
       });
 
     return () => {
@@ -71,19 +72,9 @@ export default function PolicyPageView() {
     }
   }, [page]);
 
-  useEffect(() => {
-    if (page === undefined) {
-      setMounted(false);
-      return;
-    }
-    const id = requestAnimationFrame(() => setMounted(true));
-    return () => cancelAnimationFrame(id);
-  }, [page]);
-
-  const fade = (delay: string) =>
-    `transition-all duration-700 ease-out ${delay} ${
-      mounted ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
-    }`;
+  // CSS-only entrance animation (see .fade-up in globals.css), so content is
+  // always visible once the animation ends, even if JS timing is throttled.
+  const fade = (delay: string) => `fade-up ${delay}`;
 
   if (page === undefined) {
     return <LoadingScreen />;
@@ -139,7 +130,11 @@ export default function PolicyPageView() {
 
         <div
           className={`policy-prose prose prose-neutral mt-10 max-w-none prose-headings:font-normal prose-headings:tracking-tight prose-a:text-gray-900 prose-img:rounded-xl ${fade("delay-300")}`}
-          dangerouslySetInnerHTML={{ __html: sanitizePolicyHtml(page.content) }}
+          dangerouslySetInnerHTML={{
+            // Built-in pages are trusted, static HTML and can render on the server;
+            // admin-authored content is sanitized (which only works in the browser).
+            __html: page.id.startsWith("default-") ? page.content : sanitizePolicyHtml(page.content),
+          }}
         />
       </div>
     </div>

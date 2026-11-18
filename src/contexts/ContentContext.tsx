@@ -25,17 +25,13 @@ const ContentContext = createContext<ContentContextValue>({
 export function ContentProvider({ children }: { children: React.ReactNode }) {
   const [content, setContent] = useState<ContentMap>(getAllDefaults());
   const [products, setProducts] = useState<Product[]>(defaultProducts);
-  const [loading, setLoading] = useState(firebaseEnabled);
   const seeded = useRef(false);
   const loadedSections = useRef(new Set<string>());
   const [contentReady, setContentReady] = useState(!firebaseEnabled);
   const [productsReady, setProductsReady] = useState(!firebaseEnabled);
 
   useEffect(() => {
-    if (!firebaseEnabled || !db) {
-      setLoading(false);
-      return;
-    }
+    if (!firebaseEnabled || !db) return;
     const firestore = db;
 
     const unsubs = contentSchema.map((section) =>
@@ -82,9 +78,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  useEffect(() => {
-    if (contentReady && productsReady) setLoading(false);
-  }, [contentReady, productsReady]);
+  const loading = !(contentReady && productsReady);
 
   return (
     <ContentContext.Provider value={{ content, products, loading, firebaseEnabled }}>

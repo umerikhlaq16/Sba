@@ -7,7 +7,6 @@ export default function BrandsWeWorkWith() {
   const copy = useSection("brandsHome") as {
     enabled?: boolean;
     eyebrow: string;
-    eyebrowSize?: number;
     heading: string;
     badgeLabel: string;
     brands: { name: string; logo?: string }[];
@@ -24,8 +23,7 @@ export default function BrandsWeWorkWith() {
       <div className="mx-auto max-w-[1600px]">
         <div className="flex flex-col items-center text-center">
           <p
-            className="font-medium uppercase tracking-widest text-brand"
-            style={{ fontSize: `${copy.eyebrowSize ?? 12}px` }}
+            className="section-label text-brand"
           >
             {copy.eyebrow}
           </p>

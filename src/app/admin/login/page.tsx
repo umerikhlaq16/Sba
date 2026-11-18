@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { firebaseEnabled } from "@/lib/firebase";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { auth, firebaseEnabled } from "@/lib/firebase";
 import Logo from "@/components/Logo";
 import Spinner from "@/components/Spinner";
 
@@ -14,6 +15,8 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [sendingReset, setSendingReset] = useState(false);
+  const [resetMessage, setResetMessage] = useState("");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -36,6 +39,27 @@ export default function AdminLoginPage() {
       setError("Invalid email or password.");
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function handleForgotPassword() {
+    setError("");
+    setResetMessage("");
+    if (!email) {
+      setError("Enter your admin email above, then click Forgot password.");
+      return;
+    }
+    if (!auth) return;
+    setSendingReset(true);
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch {
+      // Ignore errors such as unknown email so we don't reveal which emails are admins.
+    } finally {
+      setSendingReset(false);
+      setResetMessage(
+        `If ${email} is an admin account, a password reset link has been sent. Check your inbox and spam folder.`
+      );
     }
   }
 
@@ -101,6 +125,16 @@ export default function AdminLoginPage() {
           </div>
 
           {error && <p className="text-sm text-red-500">{error}</p>}
+          {resetMessage && <p className="text-sm text-green-600">{resetMessage}</p>}
+
+          <button
+            type="button"
+            onClick={handleForgotPassword}
+            disabled={sendingReset}
+            className="self-end text-xs text-gray-500 underline-offset-4 hover:text-gray-900 hover:underline disabled:opacity-60"
+          >
+            {sendingReset ? "Sending reset email..." : "Forgot password?"}
+          </button>
 
           <button
             type="submit"

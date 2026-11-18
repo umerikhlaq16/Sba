@@ -4,18 +4,13 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import AboutSection from "@/components/AboutSection";
-import WhyChooseUs from "@/components/WhyChooseUs";
 import Products from "@/components/Products";
 import FacilitySection from "@/components/FacilitySection";
 import BrandsWeWorkWith from "@/components/BrandsWeWorkWith";
-import Testimonials from "@/components/Testimonials";
-import Faq from "@/components/Faq";
 import { useSection } from "@/contexts/ContentContext";
 
 export default function Home() {
   const hero = useSection("hero") as {
-    eyebrow: string;
-    eyebrowSize?: number;
     title: string;
     description: string;
     image: string;
@@ -25,7 +20,6 @@ export default function Home() {
     primaryCtaLink: string;
     secondaryCtaLabel: string;
     secondaryCtaLink: string;
-    stats: { value: string; label: string }[];
   };
 
   const slides = (hero.slides ?? []).filter((s) => s.image);
@@ -79,16 +73,10 @@ export default function Home() {
 
           <div className="relative flex h-full items-center justify-center px-4 text-center sm:px-6 lg:px-8">
             <div className="hero-fade-up mx-auto flex w-full max-w-[1600px] flex-col items-center">
-              <span
-                className="inline-block font-medium uppercase tracking-[0.16em] text-white/80"
-                style={{ fontSize: `${hero.eyebrowSize ?? 12}px` }}
-              >
-                {hero.eyebrow}
-              </span>
-              <h1 className="mt-5 max-w-2xl font-serif text-4xl leading-[1.12] tracking-tight text-white sm:text-5xl lg:text-6xl">
+              <h1 className="max-w-4xl font-serif text-5xl leading-[1.08] tracking-tight text-white sm:text-6xl lg:text-7xl xl:text-8xl">
                 {hero.title}
               </h1>
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-white/80 sm:text-lg">
+              <p className="mt-6 max-w-xl text-base leading-relaxed text-white sm:text-lg">
                 {hero.description}
               </p>
 
@@ -124,28 +112,12 @@ export default function Home() {
             </div>
           )}
         </div>
-
-        <div className="mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 gap-x-6 gap-y-8 border-b border-foreground/10 py-10 sm:grid-cols-4 sm:py-12">
-            {(hero.stats ?? []).map((stat, i) => (
-              <div key={i}>
-                <p className="font-serif text-3xl text-foreground sm:text-4xl">{stat.value}</p>
-                <p className="mt-1.5 text-xs uppercase tracking-[0.08em] text-foreground/55 sm:text-sm">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
       </section>
 
       <AboutSection />
-      <WhyChooseUs />
       <Products />
       <FacilitySection />
       <BrandsWeWorkWith />
-      <Testimonials />
-      <Faq />
     </div>
   );
 }

@@ -97,7 +97,8 @@ export default function ProductFormPage({ params }: { params: Promise<{ id: stri
       return;
     }
     setSaving(true);
-    const { slug: _slug, ...data } = form;
+    const data: Partial<typeof form> = { ...form };
+    delete data.slug;
     await setDoc(doc(db, "products", slug), data, { merge: true });
     setSaving(false);
     router.push("/admin/products");

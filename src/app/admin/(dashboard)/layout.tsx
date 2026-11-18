@@ -33,6 +33,14 @@ const icons = {
       strokeLinejoin="round"
     />
   ),
+  inquiries: (
+    <path
+      d="M4 6h16v12H4V6Zm0 0 8 7 8-7"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  ),
   page: (
     <path
       d="M6 3h9l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Zm8 0v5h5M8 12h8M8 16h8M8 8h3"
@@ -118,6 +126,13 @@ function NavContent({ pathname, onNavigate }: { pathname: string | null; onNavig
             active={!!pathname?.startsWith("/admin/policies")}
             onClick={onNavigate}
           />
+          <NavLink
+            href="/admin/inquiries"
+            label="Inquiries"
+            icon={<NavIcon path={icons.inquiries} />}
+            active={!!pathname?.startsWith("/admin/inquiries")}
+            onClick={onNavigate}
+          />
         </div>
 
         {pages.map((page) => (
@@ -151,7 +166,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  // The mobile menu remembers the path it was opened on, so it closes itself on navigation.
+  const [mobileOpenPath, setMobileOpenPath] = useState<string | null>(null);
+  const mobileOpen = mobileOpenPath !== null && mobileOpenPath === pathname;
+  const setMobileOpen = (open: boolean) => setMobileOpenPath(open ? pathname : null);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setMounted(true));
@@ -163,10 +181,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       router.replace("/admin/login");
     }
   }, [loading, user, router]);
-
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
 
   if (!firebaseEnabled) {
     return (

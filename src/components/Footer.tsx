@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Logo from "./Logo";
 import { useSection } from "@/contexts/ContentContext";
+import { submitSubscriber } from "@/lib/submissions";
 
 const socialIcons = {
   Instagram:
@@ -15,6 +16,7 @@ const socialIcons = {
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(false);
   const copy = useSection("footer") as {
     description: string;
     newsletterText: string;
@@ -31,16 +33,23 @@ export default function Footer() {
     { name: "Instagram", url: copy.instagramUrl, path: socialIcons.Instagram },
     { name: "X", url: copy.xUrl, path: socialIcons.X },
     { name: "LinkedIn", url: copy.linkedinUrl, path: socialIcons.LinkedIn },
-  ];
+  ].filter((s) => s.url && s.url !== "#");
   const columns = [
     { title: "Company", links: copy.companyLinks ?? [] },
     { title: "Support", links: copy.supportLinks ?? [] },
   ];
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email) return;
-    setSubmitted(true);
+    setError(false);
+    try {
+      const saved = await submitSubscriber(email.trim());
+      if (saved) setSubmitted(true);
+      else setError(true);
+    } catch {
+      setError(true);
+    }
   }
 
   return (
@@ -119,6 +128,7 @@ export default function Footer() {
                 </button>
               </form>
             )}
+            {error && <p className="mt-2 text-xs text-red-300">Couldn&apos;t subscribe right now. Please try again.</p>}
           </div>
         </div>
 

@@ -8,9 +8,6 @@ export default function Products() {
   const copy = useSection("productsHome") as {
     enabled?: boolean;
     eyebrow: string;
-    eyebrowSize?: number;
-    heading1: string;
-    heading2: string;
     ctaLink: string;
     catalogPdfUrl?: string;
     selectedProducts?: string[];
@@ -27,19 +24,13 @@ export default function Products() {
   return (
     <section id="products" className="scroll-mt-24 border-t border-foreground/10 bg-background px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
       <div className="mx-auto max-w-[1600px]">
-        <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
+        <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
           <div>
             <p
-              className="font-medium uppercase tracking-widest text-brand"
-              style={{ fontSize: `${copy.eyebrowSize ?? 12}px` }}
+              className="section-label text-brand"
             >
               {copy.eyebrow}
             </p>
-            <h2 className="mt-3 max-w-xl font-serif text-4xl leading-snug text-foreground sm:text-5xl">
-              {copy.heading1}
-              <br />
-              {copy.heading2}
-            </h2>
           </div>
 
           <a

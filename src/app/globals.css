@@ -146,3 +146,39 @@ button:not(:disabled),
   max-width: 100%;
   border-radius: 0.75rem;
 }
+
+/* Entrance animation for policy pages */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.fade-up {
+  animation: fade-up 0.7s ease-out both;
+}
+.fade-up.delay-100 { animation-delay: 100ms; }
+.fade-up.delay-150 { animation-delay: 150ms; }
+.fade-up.delay-200 { animation-delay: 200ms; }
+.fade-up.delay-300 { animation-delay: 300ms; }
+@media (prefers-reduced-motion: reduce) {
+  .fade-up { animation: none; }
+}
+
+/* One shared size for every section label (Who We Are, Our Story, FAQ, ...) */
+.section-label {
+  font-size: 1.375rem; /* 22px on phones */
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+@media (min-width: 640px) {
+  .section-label {
+    font-size: 1.875rem; /* 30px on tablets and up */
+  }
+}

@@ -106,6 +106,8 @@ export default function PolicyPageEditor({ params }: { params: Promise<{ id: str
     }
     if (!pageId) return; // don't autosave until the page has been created once
     if (autosaveTimer.current) clearTimeout(autosaveTimer.current);
+    // Showing "saving" as soon as the form changes is the intended UX for the debounced autosave.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setAutosaveStatus("saving");
     autosaveTimer.current = setTimeout(async () => {
       await persist(form);

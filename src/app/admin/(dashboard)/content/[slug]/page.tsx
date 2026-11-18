@@ -18,18 +18,18 @@ export default function ContentEditorPage({
   const section = contentSchema.find((s) => s.key === slug);
 
   const [values, setValues] = useState<Record<string, unknown>>({});
-  const [loading, setLoading] = useState(true);
+  const [loadedKey, setLoadedKey] = useState<string | null>(null);
+  const loading = loadedKey !== section?.key;
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     if (!section || !db) return;
-    setLoading(true);
     getDoc(doc(db, "content", section.key)).then((snap) => {
       const defaults = getSectionDefaults(section);
       if (!snap.exists()) {
         setValues(defaults);
-        setLoading(false);
+        setLoadedKey(section.key);
         return;
       }
       const saved = snap.data();
@@ -38,7 +38,7 @@ export default function ContentEditorPage({
         if (field.key in saved) current[field.key] = saved[field.key];
       }
       setValues(current);
-      setLoading(false);
+      setLoadedKey(section.key);
     });
   }, [section]);
 
@@ -455,7 +455,7 @@ function ProductPicker({
     <div className="flex flex-col gap-2">
       <label className="text-xs font-medium uppercase tracking-wide text-gray-400">{label}</label>
       <p className="text-xs text-gray-400">
-        Leave all as "Auto" to show the default lineup. Each product can only be picked once.
+        Leave all as &quot;Auto&quot; to show the default lineup. Each product can only be picked once.
       </p>
       <div className="flex flex-col gap-2">
         {slots.map((slug, i) => {
